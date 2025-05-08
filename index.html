@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Stocks Dashboard (CSV)</title>
+</head>
+<body>
+
+    <h1>Stocks Dashboard (CSV)</h1>
+    <a href="../index.html">Home</a>
+
+    
+    <hr>
+    <h2>Dashboard</h2>
+
+    <h3>Stock Selection Form</h3>
+    <div>
+        <label>Stock:</label>
+        <select id="stock-selector">
+            <option value="MSFT" selected>Microsoft (MSFT)</option>
+            <option value="GOOG">Google (GOOGL)</option>
+            <option value="AAPL">Apple (AAPL)</option>
+            <option value="NFLX">Netflix (NFLX)</option>
+            <option value="SPOT">Spotify (SPOT)</option>
+        </select>
+    </div>
+
+    <h3>Outputs</h3>
+
+    <div>
+        <p>Date Range:
+            <span id="display-earliest-date">TODO</span> to
+            <span id="display-latest-date">TODO</span>
+        </p>
+        <p>Earliest Close: <span id="display-earliest-close">TODO</span></p>
+        <p>Latest Close: <span id="display-latest-close">TODO</span></p>
+        <p>Percent Change: <span id="display-return">TODO</span></p>
+        <p>100 Day High: <span id="display-high">TODO</span></p>
+        <p>100 Day Low: <span id="display-low">TODO</span></p>
+    </div>
+
+    <div id="dataviz-container"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+    <script src="https://cdn.plot.ly/plotly-3.0.0.min.js"></script>
+    <script type="text/javascript">
+
+        function formatUSD(price) {
+            return `$${price.toFixed(2)}`
+        }
+
+        function formatPct(percentage) {
+            return `${(percentage * 100).toFixed(2)}%`
+        }
+
+        // USE SESSION STORAGE TO MINIMIZE THE NUMBER OF TIMES WE HAVE TO PROVIDE THE CREDENTIAL
+        // sessionStorage.clear()
+
+        // check session storage for the API Key: = 8XF9XN2HP9CPJNL3
+        var apiKey = sessionStorage.getItem("ALPHAVANTAGE_API_KEY")
+        if (!apiKey) {
+            // if it isn't there, ask the user to supply it:
+            apiKey = prompt("Please enter your AlphaVantage API key:")
+            // store it in the session for later (so it will persist after refreshing the page)
+            sessionStorage.setItem("ALPHAVANTAGE_API_KEY", apiKey)
+        }
+
+        // FUNCTION DEFINITION
+        function updateDashboard() {
+            console.log("--------------------")
+
+            // capturing form inputs:
+            var symbol = "NFLX" // TODO: get from drop-down instead
+            console.log("SYMBOL:", symbol)
+
+            //var requestUrl = "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&datatype=csv&symbol=" + symbol + "&apikey=" + apiKey
+            var requestUrl ="https://www.alphavantage.co/query?function=OVERVIEW&datatype=csv&symbol=" + symbol + "&apikey=" + apiKey
+            d3.csv(requestUrl).then(function(data) {
+                console.log("DATA:", data)
+
+            }).catch(function(err){
+                console.error("OOPS", err)
+                alert("OOPS, please check your inputs and try again. For example, try using a premium API key.")
+            })
+        }
+        updateDashboard();
+
+    </script>
+</body>
+</html>
