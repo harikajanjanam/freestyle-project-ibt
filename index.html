@@ -1,90 +1,163 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Stocks Dashboard (CSV)</title>
+  <meta charset="UTF-8">
+  <title>Company Directory</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 40px;
+      background-color: #f4f4f9;
+      color: #333;
+    }
+
+    h1 {
+      text-align: center;
+    }
+
+    .controls {
+      margin: 20px 0;
+      text-align: center;
+    }
+
+    select {
+      padding: 8px 12px;
+      margin: 0 10px;
+      font-size: 16px;
+    }
+
+    .accordion {
+      background-color: #fff;
+      color: #444;
+      cursor: pointer;
+      padding: 14px 20px;
+      width: 100%;
+      border: none;
+      border-bottom: 1px solid #ccc;
+      text-align: left;
+      outline: none;
+      font-size: 18px;
+      transition: background-color 0.2s ease;
+    }
+
+    .accordion:hover {
+      background-color: #e9ecef;
+    }
+
+    .panel {
+      padding: 0 20px;
+      display: none;
+      background-color: #fff;
+      overflow: hidden;
+      border-bottom: 1px solid #ccc;
+    }
+
+    .panel p {
+      margin: 10px 0;
+    }
+  </style>
 </head>
 <body>
 
-    <h1>Stocks Dashboard (CSV)</h1>
-    <a href="../index.html">Home</a>
+  <h1>Company Directory</h1>
 
-    
-    <hr>
-    <h2>Dashboard</h2>
+  <div class="controls">
+    <label for="sort-select">Sort by:</label>
+    <select id="sort-select">
+      <option value="name">Name (A-Z)</option>
+      <option value="industry">Industry</option>
+      <option value="employees">Number of Employees</option>
+    </select>
+  </div>
 
-    <h3>Stock Selection Form</h3>
-    <div>
-        <label>Stock:</label>
-        <select id="stock-selector">
-            <option value="MSFT" selected>Microsoft (MSFT)</option>
-            <option value="GOOG">Google (GOOGL)</option>
-            <option value="AAPL">Apple (AAPL)</option>
-            <option value="NFLX">Netflix (NFLX)</option>
-            <option value="SPOT">Spotify (SPOT)</option>
-        </select>
-    </div>
+  <div id="company-list"></div>
 
-    <h3>Outputs</h3>
+  <script>
+    const companies = [
+      {
+        name: "Netflix Inc",
+        industry: "Entertainment",
+        employees: 12000,
+        ceo: "Ted Sarandos",
+        website: "https://www.netflix.com",
+        headquarters: "Los Gatos, California"
+      },
+      {
+        name: "Apple Inc",
+        industry: "Technology",
+        employees: 154000,
+        ceo: "Tim Cook",
+        website: "https://www.apple.com",
+        headquarters: "Cupertino, California"
+      },
+      {
+        name: "Tesla Inc",
+        industry: "Automotive",
+        employees: 99290,
+        ceo: "Elon Musk",
+        website: "https://www.tesla.com",
+        headquarters: "Palo Alto, California"
+      },
+      {
+        name: "Spotify AB",
+        industry: "Music Streaming",
+        employees: 8100,
+        ceo: "Daniel Ek",
+        website: "https://www.spotify.com",
+        headquarters: "Stockholm, Sweden"
+      }
+    ];
 
-    <div>
-        <p>Date Range:
-            <span id="display-earliest-date">TODO</span> to
-            <span id="display-latest-date">TODO</span>
-        </p>
-        <p>Earliest Close: <span id="display-earliest-close">TODO</span></p>
-        <p>Latest Close: <span id="display-latest-close">TODO</span></p>
-        <p>Percent Change: <span id="display-return">TODO</span></p>
-        <p>100 Day High: <span id="display-high">TODO</span></p>
-        <p>100 Day Low: <span id="display-low">TODO</span></p>
-    </div>
+    const companyList = document.getElementById("company-list");
+    const sortSelect = document.getElementById("sort-select");
 
-    <div id="dataviz-container"></div>
+    function renderCompanies(data) {
+      companyList.innerHTML = "";
+      data.forEach((company, index) => {
+        const btn = document.createElement("button");
+        btn.className = "accordion";
+        btn.textContent = company.name;
+        btn.addEventListener("click", function () {
+          this.classList.toggle("active");
+          const panel = this.nextElementSibling;
+          panel.style.display = panel.style.display === "block" ? "none" : "block";
+        });
 
-    <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
-    <script src="https://cdn.plot.ly/plotly-3.0.0.min.js"></script>
-    <script type="text/javascript">
+        const panel = document.createElement("div");
+        panel.className = "panel";
+        panel.innerHTML = `
+          <p><strong>Industry:</strong> ${company.industry}</p>
+          <p><strong>Employees:</strong> ${company.employees.toLocaleString()}</p>
+          <p><strong>CEO:</strong> ${company.ceo}</p>
+          <p><strong>Headquarters:</strong> ${company.headquarters}</p>
+          <p><strong>Website:</strong> <a href="${company.website}" target="_blank">${company.website}</a></p>
+        `;
 
-        function formatUSD(price) {
-            return `$${price.toFixed(2)}`
+        companyList.appendChild(btn);
+        companyList.appendChild(panel);
+      });
+    }
+
+    function sortCompanies(criteria) {
+      const sorted = [...companies].sort((a, b) => {
+        if (criteria === "name") {
+          return a.name.localeCompare(b.name);
+        } else if (criteria === "industry") {
+          return a.industry.localeCompare(b.industry);
+        } else if (criteria === "employees") {
+          return b.employees - a.employees;
         }
+      });
+      renderCompanies(sorted);
+    }
 
-        function formatPct(percentage) {
-            return `${(percentage * 100).toFixed(2)}%`
-        }
+    sortSelect.addEventListener("change", (e) => {
+      sortCompanies(e.target.value);
+    });
 
-        // USE SESSION STORAGE TO MINIMIZE THE NUMBER OF TIMES WE HAVE TO PROVIDE THE CREDENTIAL
-        // sessionStorage.clear()
+    // Initial render
+    sortCompanies("name");
+  </script>
 
-        // check session storage for the API Key: = 8XF9XN2HP9CPJNL3
-        var apiKey = sessionStorage.getItem("ALPHAVANTAGE_API_KEY")
-        if (!apiKey) {
-            // if it isn't there, ask the user to supply it:
-            apiKey = prompt("Please enter your AlphaVantage API key:")
-            // store it in the session for later (so it will persist after refreshing the page)
-            sessionStorage.setItem("ALPHAVANTAGE_API_KEY", apiKey)
-        }
-
-        // FUNCTION DEFINITION
-        function updateDashboard() {
-            console.log("--------------------")
-
-            // capturing form inputs:
-            var symbol = "NFLX" // TODO: get from drop-down instead
-            console.log("SYMBOL:", symbol)
-
-            //var requestUrl = "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&datatype=csv&symbol=" + symbol + "&apikey=" + apiKey
-            var requestUrl ="https://www.alphavantage.co/query?function=OVERVIEW&datatype=csv&symbol=" + symbol + "&apikey=" + apiKey
-            d3.csv(requestUrl).then(function(data) {
-                console.log("DATA:", data)
-
-            }).catch(function(err){
-                console.error("OOPS", err)
-                alert("OOPS, please check your inputs and try again. For example, try using a premium API key.")
-            })
-        }
-        updateDashboard();
-
-    </script>
 </body>
 </html>
