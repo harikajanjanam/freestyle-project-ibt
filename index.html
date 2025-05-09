@@ -5,12 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>World Explorer</title>
     <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 </head>
 <body>
     <h1>World Explorer</h1>
-    <p class="subtext">Click on any card below to view more details about each country.</p>
     <div class="controls">
-        <input type="text" id="search" placeholder="Search by country name...">
+        <input type="text" id="search" placeholder="Search by country name">
         <select id="region-filter">
             <option value="">All Regions</option>
             <option value="Africa">Africa</option>
@@ -24,6 +24,7 @@
             <option value="population">Sort by Population</option>
         </select>
     </div>
+    <p class="subtext"><b>Note: Click on any country below to view more details about each country, including GDP trends.</b></p>
     <div id="countries"></div>
     <script src="script.js"></script>
 </body>
