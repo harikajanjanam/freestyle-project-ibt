@@ -1,163 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Company Directory</title>
-  <style>
-    body {
-      font-family: 'Segoe UI', sans-serif;
-      margin: 40px;
-      background-color: #f4f4f9;
-      color: #333;
-    }
-
-    h1 {
-      text-align: center;
-    }
-
-    .controls {
-      margin: 20px 0;
-      text-align: center;
-    }
-
-    select {
-      padding: 8px 12px;
-      margin: 0 10px;
-      font-size: 16px;
-    }
-
-    .accordion {
-      background-color: #fff;
-      color: #444;
-      cursor: pointer;
-      padding: 14px 20px;
-      width: 100%;
-      border: none;
-      border-bottom: 1px solid #ccc;
-      text-align: left;
-      outline: none;
-      font-size: 18px;
-      transition: background-color 0.2s ease;
-    }
-
-    .accordion:hover {
-      background-color: #e9ecef;
-    }
-
-    .panel {
-      padding: 0 20px;
-      display: none;
-      background-color: #fff;
-      overflow: hidden;
-      border-bottom: 1px solid #ccc;
-    }
-
-    .panel p {
-      margin: 10px 0;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>World Explorer</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
-  <h1>Company Directory</h1>
-
-  <div class="controls">
-    <label for="sort-select">Sort by:</label>
-    <select id="sort-select">
-      <option value="name">Name (A-Z)</option>
-      <option value="industry">Industry</option>
-      <option value="employees">Number of Employees</option>
-    </select>
-  </div>
-
-  <div id="company-list"></div>
-
-  <script>
-    const companies = [
-      {
-        name: "Netflix Inc",
-        industry: "Entertainment",
-        employees: 12000,
-        ceo: "Ted Sarandos",
-        website: "https://www.netflix.com",
-        headquarters: "Los Gatos, California"
-      },
-      {
-        name: "Apple Inc",
-        industry: "Technology",
-        employees: 154000,
-        ceo: "Tim Cook",
-        website: "https://www.apple.com",
-        headquarters: "Cupertino, California"
-      },
-      {
-        name: "Tesla Inc",
-        industry: "Automotive",
-        employees: 99290,
-        ceo: "Elon Musk",
-        website: "https://www.tesla.com",
-        headquarters: "Palo Alto, California"
-      },
-      {
-        name: "Spotify AB",
-        industry: "Music Streaming",
-        employees: 8100,
-        ceo: "Daniel Ek",
-        website: "https://www.spotify.com",
-        headquarters: "Stockholm, Sweden"
-      }
-    ];
-
-    const companyList = document.getElementById("company-list");
-    const sortSelect = document.getElementById("sort-select");
-
-    function renderCompanies(data) {
-      companyList.innerHTML = "";
-      data.forEach((company, index) => {
-        const btn = document.createElement("button");
-        btn.className = "accordion";
-        btn.textContent = company.name;
-        btn.addEventListener("click", function () {
-          this.classList.toggle("active");
-          const panel = this.nextElementSibling;
-          panel.style.display = panel.style.display === "block" ? "none" : "block";
-        });
-
-        const panel = document.createElement("div");
-        panel.className = "panel";
-        panel.innerHTML = `
-          <p><strong>Industry:</strong> ${company.industry}</p>
-          <p><strong>Employees:</strong> ${company.employees.toLocaleString()}</p>
-          <p><strong>CEO:</strong> ${company.ceo}</p>
-          <p><strong>Headquarters:</strong> ${company.headquarters}</p>
-          <p><strong>Website:</strong> <a href="${company.website}" target="_blank">${company.website}</a></p>
-        `;
-
-        companyList.appendChild(btn);
-        companyList.appendChild(panel);
-      });
-    }
-
-    function sortCompanies(criteria) {
-      const sorted = [...companies].sort((a, b) => {
-        if (criteria === "name") {
-          return a.name.localeCompare(b.name);
-        } else if (criteria === "industry") {
-          return a.industry.localeCompare(b.industry);
-        } else if (criteria === "employees") {
-          return b.employees - a.employees;
-        }
-      });
-      renderCompanies(sorted);
-    }
-
-    sortSelect.addEventListener("change", (e) => {
-      sortCompanies(e.target.value);
-    });
-
-    // Initial render
-    sortCompanies("name");
-  </script>
-
+    <h1>World Explorer</h1>
+    <div class="controls">
+        <input type="text" id="search" placeholder="Search by country name...">
+        <select id="region-filter">
+            <option value="">All Regions</option>
+            <option value="Africa">Africa</option>
+            <option value="Americas">Americas</option>
+            <option value="Asia">Asia</option>
+            <option value="Europe">Europe</option>
+            <option value="Oceania">Oceania</option>
+        </select>
+        <select id="sort-by">
+            <option value="name">Sort by Name</option>
+            <option value="population">Sort by Population</option>
+        </select>
+    </div>
+    <div id="countries"></div>
+    <script src="script.js"></script>
 </body>
 </html>
